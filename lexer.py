@@ -3,6 +3,7 @@ import re
 
 class lexer:
 
+
 	# Function assigns param filepath to internal var, opens file
 	# in read mode
 	def __init__(self, filepath):
@@ -12,6 +13,8 @@ class lexer:
 		self.setRegexes()
 		self.setLexemePtrs()
 
+
+	# Function that initialized patterns to look for as internal vars
 	def setRegexes(self):
 		self.keywords = ['auto', 'double', 'int', 'struct', 'break',	
 						'else', 'long', 'switch', 'case', 'enum', 
@@ -31,17 +34,24 @@ class lexer:
 		self.logop = ['!', '||', '&&']
 		self.bitop = ['|', '&', '^']
 
+
+
 	# Function that initializes lexeme beign and forward pointers
 	def setLexemePtrs(self):
 		self.lexemeBegin, self.lexemeForward = 0,0
+
 
 	# Function replaces all tabs and newlines with whitespace,returns string
 	def formatFile(self):
 		_filecontent = self.fileobj.read().replace('\n', ' ').replace('\t', ' ')
 		return _filecontent
 
+
+
 	# Function generates tokens based on RegEx and returns them to parser
 	# using a lexeme begin and forward ptr
+	# need to implement lookaheads and count number of characters matched,
+	# return token of the one that got the most matched characters
 	def genToken(self):
 		for i in range(0, len(self.filecontent)):
 			self.lexemeForward += 1

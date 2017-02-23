@@ -1,5 +1,8 @@
-// ssh 01fb14ecs030@10.2.20.221
-// password: 01fb14ecs030
+/*
+	Implementation of a 'stat' command
+	using the 'stat' system call and relevant masks
+*/
+// Unix systems programming
 
 #include <stdio.h>
 #include <sys/types.h>
