@@ -1,3 +1,10 @@
-test file
-test 2
+#include <stdio.h>
 
+int main() {
+
+
+
+	int a = 2;
+	printf("%d", a);
+	return 0;
+}

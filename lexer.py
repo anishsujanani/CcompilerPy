@@ -1,0 +1,99 @@
+import os.path
+import re
+
+class lexer:
+
+	# Function assigns param filepath to internal var, opens file
+	# in read mode
+	def __init__(self, filepath):
+		self.filepath = filepath
+		self.fileobj = open(filepath, 'r')
+		self.filecontent = self.formatFile()
+		self.setRegexes()
+		self.setLexemePtrs()
+
+	def setRegexes(self):
+		self.keywords = ['auto', 'double', 'int', 'struct', 'break',	
+						'else', 'long', 'switch', 'case', 'enum', 
+						'register',	'typedef', 'char', 'extern', 'return',
+						'union', 'const', 'float', 'short', 'unsigned',
+						'continue', 'for', 'signed', 'void', 'default',	
+						'goto', 'sizeof', 'volatile', 'do', 'if', 'static',	
+						'while', '#include']
+
+		self.punctuation = [',', '"', "'", ';', '.', '[', ']', '(', ')']
+
+		self.arithop = ['+', '-', '*', '/']
+		self.incop = ['++']
+		self.decop = ['--']
+		self.relop = ['<', '<=', '>', '>=', '!=', '==']
+		self.asgnop = ['=']
+		self.logop = ['!', '||', '&&']
+		self.bitop = ['|', '&', '^']
+
+	# Function that initializes lexeme beign and forward pointers
+	def setLexemePtrs(self):
+		self.lexemeBegin, self.lexemeForward = 0,0
+
+	# Function replaces all tabs and newlines with whitespace,returns string
+	def formatFile(self):
+		_filecontent = self.fileobj.read().replace('\n', ' ').replace('\t', ' ')
+		return _filecontent
+
+	# Function generates tokens based on RegEx and returns them to parser
+	# using a lexeme begin and forward ptr
+	def genToken(self):
+		for i in range(0, len(self.filecontent)):
+			self.lexemeForward += 1
+			current_string = self.filecontent[self.lexemeBegin:self.lexemeForward]
+	
+			# delimited by spaces		
+			if self.filecontent[i] == ' ':
+				self.lexemeBegin = self.lexemeForward
+			
+			# search for keywords
+			if current_string in self.keywords:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+
+			elif current_string in self.punctuation:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+			
+			elif current_string in self.arithop:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+			
+			elif current_string in self.incop:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+			
+			elif current_string in self.decop:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+			
+			elif current_string in self.relop:
+				lookahead = i + 1
+				while self.filecontent[lookahead] == ' ':
+					lookahead += 1
+					self.lexemeBegin = self.lexemeForward
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+
+			elif current_string in self.asgnop:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+			
+			elif current_string in self.logop:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+			
+			elif current_string in self.bitop:
+				print current_string
+				self.lexemeBegin = self.lexemeForward
+
+
+		return self.filecontent					
+		#return self.filecontent
+
+	

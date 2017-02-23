@@ -1,12 +1,11 @@
 import sys
 import argparse
-from Lexer import *
+from parser import *
 
 class LanguageProcessor:
 	def __init__(self, filepath):
-		lexer = Lexer(filepath)
-		#parser = Parser()
-
+		self.parser = parser(filepath)
+		self.parser.beginParse()
 
 
 # entry point
@@ -19,13 +18,8 @@ def main():
 	args = arg_parser.parse_args()
 	filepath = args.FILEPATH
 
-	#print len(sys.argv), sys.argv
-	#print filename
-
 	lp = LanguageProcessor(filepath)
 	exit(0)	
-
-
 
 
 if __name__ == '__main__':
