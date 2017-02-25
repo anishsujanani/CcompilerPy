@@ -43,14 +43,14 @@ class lexer:
 
 	# Function replaces all tabs and newlines with whitespace,returns string
 	def formatFile(self):
-		code = open(self.filepath, 'r').read()
-		_filecontent = self.removeComments(code).replace('\n', ' ').replace('\t', ' ')
+		_filecontent = self.fileobj.read()
+		_filecontent = self.removeComments(_filecontent).replace('\n', ' ').replace('\t', ' ')
 		return _filecontent
 
 
 	# Function that removes all single line and multi-line comments
 	# and returns a string that contains the contents of the file.
-	def removeComments(self, code) :
+	def removeComments(self, _filecontent) :
 		def blotOutNonNewlines( strIn ) :  # Return a string containing only the newline chars contained in strIn
 			return "" + ("\n" * strIn.count('\n'))
 
@@ -66,7 +66,7 @@ class lexer:
 			re.DOTALL | re.MULTILINE
 			)
 
-		return re.sub(pattern, replacer, code)
+		return re.sub(pattern, replacer, _filecontent)
 
 
 	# Function generates tokens based on RegEx and returns them to parser
