@@ -54,56 +54,114 @@ class lexer:
 	# return token of the one that got the most matched characters
 	def genToken(self):
 		for i in range(0, len(self.filecontent)):
+		
 			self.lexemeForward += 1
 			current_string = self.filecontent[self.lexemeBegin:self.lexemeForward]
-	
+			current_char = current_string[-1:]
+			print 'current char: %s' % current_char
+			print 'current string: %s' % current_string
+			
 			# delimited by spaces		
 			if self.filecontent[i] == ' ':
 				self.lexemeBegin = self.lexemeForward
 			
 			# search for keywords
 			if current_string in self.keywords:
-				print current_string
+				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.punctuation:
-				print current_string
+				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 			
 			elif current_string in self.arithop:
-				print current_string
+				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 			
+			#lookahead
 			elif current_string in self.incop:
-				print current_string
+				lookahead = i + 1
+				while self.filecontent[lookahead] == ' ':
+					lookahead += 1
+				
+				print 'lookinghead to  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
+				
+				if self.filecontent[self.lexemeBegin:lookahead + 1] in self.relop:
+					print 'Found lookahead token  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
+
+				else:
+					print 'token ',current_string
+
 				self.lexemeBegin = self.lexemeForward
 			
+			#lookahead
 			elif current_string in self.decop:
-				print current_string
+				lookahead = i + 1
+				while self.filecontent[lookahead] == ' ':
+					lookahead += 1
+				
+				print 'lookinghead to  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
+				
+				if self.filecontent[self.lexemeBegin:lookahead + 1] in self.relop:
+					print 'Found lookahead token  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
+				else:
+					print 'token ',current_string
+
 				self.lexemeBegin = self.lexemeForward
 			
+			#lookahead
 			elif current_string in self.relop:
 				lookahead = i + 1
 				while self.filecontent[lookahead] == ' ':
 					lookahead += 1
-					self.lexemeBegin = self.lexemeForward
-				print current_string
+					
+				lookahead_chars = len(self.filecontent[self.lexemeBegin:lookahead + 1])
+				temp = self.filecontent[self.lexemeBegin:lookahead + 1]
+				lookahead_string = temp.replace(' ', '')
+				print 'lookinghead to  %s' % lookahead_string
+
+				if lookahead_string in self.relop:
+						print 'Found lookahead token  %s' % lookahead_string
+						print 'skip %s' % self.filecontent[self.lexemeBegin:lookahead + 1]
+						self.lexemeForward += lookahead_chars
+
+				else:
+						print 'token ',current_string
+
 				self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.asgnop:
-				print current_string
+				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 			
 			elif current_string in self.logop:
-				print current_string
+				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 			
 			elif current_string in self.bitop:
-				print current_string
+				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
+
+			else:
+				#if current_char in self.punctuation :
+				if self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
+					print 'token: ', current_char
+					self.lexemeBegin = self.lexemeForward
+				if(current_string[-1:] in self.keywords):
+					print 'token: ', current_string[-1:]
+					self.lexemeBegin = self.lexemeForward
+
+				else:
+					print 'token: ', self.filecontent[ self.lexemeBegin: i ]
+				
 
 
 		return self.filecontent					
 		#return self.filecontent
 
-	
+	def inPunctuation(self, current_string_char):
+		return current_string_char in self.punctuation
+	def inArithop(self, current_string_char):
+		return current_string_char in self.arithop
+	def inRelop(self, current_string_char):
+		return current_string_char in self.relop
