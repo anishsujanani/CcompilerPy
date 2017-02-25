@@ -58,8 +58,6 @@ class lexer:
 			self.lexemeForward += 1
 			current_string = self.filecontent[self.lexemeBegin:self.lexemeForward]
 			current_char = current_string[-1:]
-			print 'current char: %s' % current_char
-			print 'current string: %s' % current_string
 			
 			# delimited by spaces		
 			if self.filecontent[i] == ' ':
@@ -123,7 +121,7 @@ class lexer:
 				if lookahead_string in self.relop:
 						print 'Found lookahead token  %s' % lookahead_string
 						print 'skip %s' % self.filecontent[self.lexemeBegin:lookahead + 1]
-						self.lexemeForward += lookahead_chars
+						self.lexemeForward += lookahead_chars - 1
 
 				else:
 						print 'token ',current_string
@@ -144,18 +142,11 @@ class lexer:
 
 			else:
 				#if current_char in self.punctuation :
-				if self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
+				if current_char == ' ' or self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
+					print 'token: ', current_string[:-1]
 					print 'token: ', current_char
 					self.lexemeBegin = self.lexemeForward
-				if(current_string[-1:] in self.keywords):
-					print 'token: ', current_string[-1:]
-					self.lexemeBegin = self.lexemeForward
-
-				else:
-					print 'token: ', self.filecontent[ self.lexemeBegin: i ]
 				
-
-
 		return self.filecontent					
 		#return self.filecontent
 
