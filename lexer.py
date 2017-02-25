@@ -53,8 +53,12 @@ class lexer:
 	# need to implement lookaheads and count number of characters matched,
 	# return token of the one that got the most matched characters
 	def genToken(self):
+		skip_count = 0
 		for i in range(0, len(self.filecontent)):
-		
+			if(skip_count > 0):
+				skip_count -= 1
+				continue
+			
 			self.lexemeForward += 1
 			current_string = self.filecontent[self.lexemeBegin:self.lexemeForward]
 			current_char = current_string[-1:]
@@ -110,18 +114,22 @@ class lexer:
 			#lookahead
 			elif current_string in self.relop:
 				lookahead = i + 1
+				lookahead_chars = 1
 				while self.filecontent[lookahead] == ' ':
 					lookahead += 1
-					
-				lookahead_chars = len(self.filecontent[self.lexemeBegin:lookahead + 1])
+					lookahead_chars += 1	
+				#lookahead_chars = len(self.filecontent[self.lexemeBegin:lookahead + 1])
 				temp = self.filecontent[self.lexemeBegin:lookahead + 1]
+				lookahead_chars += temp.count(' ')
+				print 'Lookahead chars = ', lookahead_chars
 				lookahead_string = temp.replace(' ', '')
-				print 'lookinghead to  %s' % lookahead_string
+				print 'lookinghead to  %s' % lookahead_string 
 
 				if lookahead_string in self.relop:
 						print 'Found lookahead token  %s' % lookahead_string
 						print 'skip %s' % self.filecontent[self.lexemeBegin:lookahead + 1]
-						self.lexemeForward += lookahead_chars - 1
+						self.lexemeForward += lookahead_chars
+						skip_count = lookahead_chars
 
 				else:
 						print 'token ',current_string
