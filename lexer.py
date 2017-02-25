@@ -141,11 +141,13 @@ class lexer:
 				self.lexemeBegin = self.lexemeForward
 
 			else:
-				#if current_char in self.punctuation :
-				if current_char == ' ' or self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
-					print 'token: ', current_string[:-1]
-					print 'token: ', current_char
-					self.lexemeBegin = self.lexemeForward
+				if self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
+ 					print 'token: ', current_string[:-1]
+ 					print 'token: ', current_char
+ 					self.lexemeBegin = self.lexemeForward
+ 				if(current_string[-1:] in self.keywords):
+ 					print 'token: ', current_string[-1:]
+ 					self.lexemeBegin = self.lexemeForward
 				
 		return self.filecontent					
 		#return self.filecontent
