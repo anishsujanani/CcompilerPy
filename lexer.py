@@ -24,7 +24,7 @@ class lexer:
 						'goto', 'sizeof', 'volatile', 'do', 'if', 'static',	
 						'while', '#include']
 
-		self.punctuation = [',', '"', "'", ';', '.', '[', ']', '(', ')']
+		self.punctuation = [',', '"', "'", ';', '.', '[', ']', '(', ')', '{', '}']
 
 		self.arithop = ['+', '-', '*', '/']
 		self.incop = ['++']
@@ -93,8 +93,9 @@ class lexer:
 			
 			# search for keywords
 			if current_string in self.keywords:
-				print 'token ',current_string
-				self.lexemeBegin = self.lexemeForward
+				if self.filecontent[self.lexemeForward] == ' ':
+					print 'token keyword',current_string
+					self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.punctuation:
 				print 'token ',current_string
@@ -181,9 +182,7 @@ class lexer:
  					print 'token: ', current_string[:-1]
  					print 'token: ', current_char
  					self.lexemeBegin = self.lexemeForward
- 				if(current_string[-1:] in self.keywords):
- 					print 'token: ', current_string[-1:]
- 					self.lexemeBegin = self.lexemeForward
+ 				
 				
 		return self.filecontent					
 		#return self.filecontent
