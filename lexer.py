@@ -101,40 +101,19 @@ class lexer:
 				print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 			
+		
+
 			elif current_string in self.arithop:
-				print 'token ',current_string
-				self.lexemeBegin = self.lexemeForward
-			
-			#lookahead
-			elif current_string in self.incop:
-				lookahead = i + 1
-				while self.filecontent[lookahead] == ' ':
-					lookahead += 1
-				
-				print 'lookinghead to  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
-				
-				if self.filecontent[self.lexemeBegin:lookahead + 1] in self.relop:
-					print 'Found lookahead token  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
 
+				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
+					print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
+					skip_count = 1
+					self.lexemeForward += 1
 				else:
 					print 'token ',current_string
-
 				self.lexemeBegin = self.lexemeForward
 			
-			#lookahead
-			elif current_string in self.decop:
-				lookahead = i + 1
-				while self.filecontent[lookahead] == ' ':
-					lookahead += 1
-				
-				print 'lookinghead to  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
-				
-				if self.filecontent[self.lexemeBegin:lookahead + 1] in self.relop:
-					print 'Found lookahead token  %s' % self.filecontent[self.lexemeBegin:lookahead+1]
-				else:
-					print 'token ',current_string
-
-				self.lexemeBegin = self.lexemeForward
+			
 			
 			#lookahead
 			elif current_string in self.relop:
@@ -178,9 +157,17 @@ class lexer:
 					print 'token: ', current_string
  					#print 'token: ', current_char
  					self.lexemeBegin = self.lexemeForward
-				if self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
- 					print 'token: ', current_string[:-1]
- 					print 'token: ', current_char
+				elif self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
+ 					print 'rem token: ', current_string[:-1]
+ 					
+ 					if self.inArithop(current_char):
+ 						print 'LOOKAHEAD TO ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
+ 						if self.filecontent[self.lexemeBegin+1:self.lexemeForward+1] in self.incop:
+ 							print 'lookahead token: ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
+ 							self.lexemeForward += 1
+ 							skip_count = 1
+ 					else:	
+ 						print 'rem token: ', current_char
  					self.lexemeBegin = self.lexemeForward
  				
 				
