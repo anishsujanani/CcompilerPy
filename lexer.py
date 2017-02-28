@@ -91,10 +91,11 @@ class lexer:
 	def tokenController(self):
 		self.token_stream = self.getTokenStream()
 		print self.filecontent
-		print '\n\nTOKEN STREAM GENERATED:', self.token_stream
-		print 'Now calling tokenizer'
-		#self.tokenizer(current_lexeme)
-		#return self.symbol_table
+		#print '\n\nTOKEN STREAM GENERATED:', self.token_stream
+		#print 'Now calling tokenizer'
+		self.tokenizer = tokenizer()
+		self.symbol_table = self.tokenizer.tokenize(self.token_stream)
+		return self.symbol_table
 
 
 	
@@ -127,12 +128,12 @@ class lexer:
 			# search for keywords
 			if current_string in self.keywords:
 				if self.filecontent[self.lexemeForward] == ' ':
-					print 'token keyword',current_string
+					#print 'token keyword',current_string
 					token_stream.append(current_string)
 					self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.punctuation:
-				print 'token ',current_string
+				#print 'token ',current_string
 				token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 			
@@ -141,12 +142,12 @@ class lexer:
 			elif current_string in self.arithop:
 
 				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
-					print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
+					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append(current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1])
 					skip_count = 1
 					self.lexemeForward += 1
 				else:
-					print 'token ',current_string
+					#print 'token ',current_string
 					token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 			
@@ -167,26 +168,26 @@ class lexer:
 				#print 'lookinghead to  %s' % lookahead_string 
 
 				if lookahead_string in self.relop:
-						print 'Found lookahead token  %s' % lookahead_string
+						#print 'Found lookahead token  %s' % lookahead_string
 						token_stream.append(lookahead_string)
 						#print 'skip %s' % self.filecontent[self.lexemeBegin:lookahead + 1]
 						self.lexemeForward += lookahead_chars
 						skip_count = lookahead_chars
 
 				else:
-						print 'token ',current_string
+						#print 'token ',current_string
 						token_stream.append(current_string)
 
 				self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.asgnop:
 				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
-					print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
+					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append(current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1])
 					skip_count = 1
 					self.lexemeForward += 1
 				else:
-					print 'token ',current_string
+					#print 'token ',current_string
 					token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 			
@@ -194,42 +195,42 @@ class lexer:
 
 			elif current_string in self.bitLopOps:
 				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
-					print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
+					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append(current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1])
 					skip_count = 1
 					self.lexemeForward += 1
 				elif current_char == '!' and self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == '=' :
-					print 'HERESDJGSDKGJSDLKJGLSDKNGLSDN'
-					print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
+					#print 'HERESDJGSDKGJSDLKJGLSDKNGLSDN'
+					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append('!=')
 					skip_count = 1
 					self.lexemeForward += 1
 				else:
-					print 'token ',current_string
+					#print 'token ',current_string
 					token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 
 			else:
 				if (current_char.isalnum()) and self.filecontent[i + 1] == ' ':
-					print 'token: ', current_string
+					#print 'token: ', current_string
  					token_stream.append(current_string)
  					#print 'token: ', current_char
  					self.lexemeBegin = self.lexemeForward
 				elif self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
- 					print 'rem token: ', current_string[:-1]
+ 					#print 'rem token: ', current_string[:-1]
  					token_stream.append(current_string[:-1])
  					
  					if self.inArithop(current_char):
- 						print 'LOOKAHEAD TO ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
+ 						#print 'LOOKAHEAD TO ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
  						temp_lookahead_string = self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
  						if  temp_lookahead_string in self.incop or temp_lookahead_string in self.decop:
- 							print 'lookahead token: ', temp_lookahead_string
+ 							#print 'lookahead token: ', temp_lookahead_string
  							token_stream.append(temp_lookahead_string)
  							self.lexemeForward += 1
  							skip_count = 1
 
  					else:	
- 						print 'rem token: ', current_char
+ 						#print 'rem token: ', current_char
  						token_stream.append(current_char)
  					self.lexemeBegin = self.lexemeForward
  				
@@ -246,3 +247,37 @@ class lexer:
 		return current_string_char in self.arithop
 	def inRelop(self, current_string_char):
 		return current_string_char in self.relop
+
+
+
+
+# class that creates the symbol table from the tokens
+
+class tokenizer:
+	def __init__(self):
+		self.token_stream = []
+		self.symbol_table = []
+
+	def tokenize(self, token_stream):
+		string_state = False
+		self.token_stream = token_stream
+		buf = ''
+		
+		for i in self.token_stream:
+			if i == '"' and string_state == False:
+				string_state = True
+				# create " token and add the coming text to buffer
+				continue
+			elif i == '"' and string_state == True:
+				# create " token and add 'buf' as string literal token
+				string_state = False
+				print buf
+				buf = ''
+				continue
+
+			if string_state == True:
+				buf += i
+
+
+		#self.symbol_table.append(token_stream)
+		#return self.symbol_table	
