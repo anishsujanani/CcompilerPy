@@ -11,7 +11,7 @@ int main() {
 	c = ++ a;
 	c--;
 	int x = --c;
-
+	ABC != 223;
 	a = a++ + ++ a;
 	if(c++ == -- a) {
 		// do stuff

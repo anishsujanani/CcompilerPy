@@ -8,11 +8,11 @@ class parser:
 
 	# Entry point parser control function
 	def beginParse(self):
-		self.getToken()
+		self.getSymbolTable()
 
 	# Requests a token from the lexer
-	def getToken(self):
-		current_token = self.lexer.genToken()
-		print current_token
+	def getSymbolTable(self):
+		self.symbol_table = self.lexer.tokenController()
+		print 'Symbol table returned to parser: ', self.symbol_table
 
 	
