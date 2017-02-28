@@ -5,5 +5,16 @@ int main() {
 	a++;
 	a ++;
 	a = a + 3;
+	b = a++;
+	c = ++a;
+	b = a ++;
+	c = ++ a;
+	c--;
+	int x = --c;
+
+	a = a++ + ++ a;
+	if(c++ == -- a) {
+		// do stuff
+	}
 	return 0;
 }

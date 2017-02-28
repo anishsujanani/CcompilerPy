@@ -141,7 +141,12 @@ class lexer:
 				self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.asgnop:
-				print 'token ',current_string
+				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
+					print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
+					skip_count = 1
+					self.lexemeForward += 1
+				else:
+					print 'token ',current_string
 				self.lexemeBegin = self.lexemeForward
 			
 			elif current_string in self.logop:
@@ -162,10 +167,12 @@ class lexer:
  					
  					if self.inArithop(current_char):
  						print 'LOOKAHEAD TO ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
- 						if self.filecontent[self.lexemeBegin+1:self.lexemeForward+1] in self.incop:
- 							print 'lookahead token: ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
+ 						temp_lookahead_string = self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
+ 						if  temp_lookahead_string in self.incop or temp_lookahead_string in self.decop:
+ 							print 'lookahead token: ', temp_lookahead_string
  							self.lexemeForward += 1
  							skip_count = 1
+
  					else:	
  						print 'rem token: ', current_char
  					self.lexemeBegin = self.lexemeForward
