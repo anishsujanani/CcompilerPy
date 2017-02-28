@@ -16,5 +16,8 @@ int main() {
 	if(c++ == -- a) {
 		// do stuff
 	}
+	for(int i = 0; i < a++; i++) {
+		int z = --c + a++;
+	}
 	return 0;
 }
