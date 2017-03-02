@@ -12,12 +12,13 @@ int main() {
 	c--;
 	int x = --c;
 	ABC != 223;
-	a = a++ + ++ a;
+	a = a+++++ a;
 	if(c++ == -- a) {
 		// do stuff
 	}
 	for(int i = 0; i < a++; i++) {
 		int z = --c + a++;
 	}
+	int a123 = c++ + 2;
 	return 0;
 }
