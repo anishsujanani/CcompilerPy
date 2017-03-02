@@ -13,6 +13,8 @@ class parser:
 	# Requests a token from the lexer
 	def getSymbolTable(self):
 		self.symbol_table = self.lexer.tokenController()
-		print 'Symbol table returned to parser: ', self.symbol_table
-
+		#print 'Symbol table returned to parser: ', self.symbol_table
+		# just done to get list elements on newlines:
+		for i in self.symbol_table:
+			print i
 	

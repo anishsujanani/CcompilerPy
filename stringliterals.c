@@ -2,6 +2,7 @@
 
 int main() {
 	printf("test");
-	print("%d", a);
+	printf("%d", a);
+	printf("What\"s my sequqnce?\n");
 	return 0;
 }
