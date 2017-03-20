@@ -113,7 +113,7 @@ class parser:
 					self.cur_index = temp_index
 					return True
 				else:
-					print 'Expected ;'
+					print 'Expected ; or ,'
 					return False
 			else:
 				return False
@@ -132,6 +132,16 @@ class parser:
 				print 'Current', self.symbol_table[temp_index]
 				if self.symbol_table[temp_index]['token_type'] == 'identifier':
 					temp_index += 1
+					print 'Current', self.symbol_table[temp_index]
+					while self.symbol_table[temp_index]['value'] == ',':
+						temp_index += 1
+						print 'Current', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['token_type'] == 'identifier':
+								temp_index += 1
+						else:
+							print 'Expected indentifier after ,'
+							return False
+					
 					self.cur_index += temp_index - self.cur_index
 					return True
 				else:
