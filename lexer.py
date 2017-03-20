@@ -27,9 +27,9 @@ class lexer:
 						'union', 'const', 'float', 'short', 'unsigned',
 						'continue', 'for', 'signed', 'void', 'default',	
 						'goto', 'sizeof', 'volatile', 'do', 'if', 'static',	
-						'while', '#include']
+						'while', 'include']
 
-		self.punctuation = [',', '"', "'", ';', '.', '[', ']', '(', ')', '{', '}']
+		self.punctuation = [',', '"', "'", ';', '.', '[', ']', '(', ')', '{', '}', '#']
 
 		self.arithop = ['+', '-', '*', '/']
 		self.incop = ['++']
