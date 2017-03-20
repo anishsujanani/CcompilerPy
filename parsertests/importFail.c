@@ -1,4 +1,4 @@
-#include<stdlib.h>
-# include <stdio>
-#include<stdlib.h>
-#include <ctypes.h>
+#include <sys.h>
+#include <ctype.h>
+
+#include <stdio.h>

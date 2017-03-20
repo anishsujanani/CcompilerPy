@@ -37,9 +37,11 @@ class parser:
 	def parseProgram(self):
 		print '\n\nBeginning parsing: \n\n'
 		print 'Length of token stream: %s\n\n' % len(self.symbol_table)
+
 		while(self.cur_index < len(self.symbol_table)-1):
 			self.parseStatus = self.parseImports()
-
+			if self.parseStatus == False:
+				break
 			'''if self.parseStatus == False:
 										self.parseStatus = self.parseExternalDec()
 										if self.parseStatus == False:
@@ -50,26 +52,42 @@ class parser:
 	def parseImports(self):
 		print 'Current index: %s' % self.cur_index
 		temp_index = self.cur_index	
+	
 		print 'Current', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '#':
 			temp_index += 1
+			
+			print 'Current', self.symbol_table[temp_index]
 			if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'include':
-				print 'Current', self.symbol_table[temp_index]
 				temp_index += 1
+				print 'Current', self.symbol_table[temp_index]
 				if self.symbol_table[temp_index]['token_type'] == 'relop' and self.symbol_table[temp_index]['value'] == '<':
-					print 'Current', self.symbol_table[temp_index]
 					temp_index += 1
+					
+					print 'Current', self.symbol_table[temp_index]
 					if self.symbol_table[temp_index]['token_type'] == 'const' or self.symbol_table[temp_index]['token_type'] == 'identifier':
-						print 'Current', self.symbol_table[temp_index]
 						temp_index += 1
+						
+						print 'Current', self.symbol_table[temp_index]
 						if self.symbol_table[temp_index]['token_type'] == 'relop' and self.symbol_table[temp_index]['value'] == '>':
-							print temp_index
-							print 'Current', self.symbol_table[temp_index]
 							temp_index += 1
-							self.cur_index += temp_index
-							print self.cur_index
+							self.cur_index += temp_index - self.cur_index
+							print 'Current idex: ', self.cur_index
 							return True
 
+						else:
+							print 'Expected >'
+							return False
+					else:
+						print 'Expected a constant'
+						return False
+				else:
+						print 'Expected <'
+						return False
+			else:
+				print 'Expected include'
+				return False
+			
 		else:
+			print 'Expected #'
 			return False
-
