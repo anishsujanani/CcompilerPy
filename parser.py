@@ -8,7 +8,8 @@ class parser:
 		self.lexer = lexer(filepath)
 		self.cur_index = 0		
 		self.parseStatus = False
-
+		self.datatypes = ['int', 'float', 'char', 'double', 'void']
+		self.stg_classes = ['auto', 'extern', 'register', 'static']
 
 
 	# Entry point parser control function
@@ -40,13 +41,14 @@ class parser:
 
 		while(self.cur_index < len(self.symbol_table)-1):
 			self.parseStatus = self.parseImports()
+		
 			if self.parseStatus == False:
-				break
-			'''if self.parseStatus == False:
-										self.parseStatus = self.parseExternalDec()
-										if self.parseStatus == False:
-											self.parseMainFunc()'''
+				self.parseStatus = self.parseExternalDec()
+				if self.parseStatus == False:
+					return self.parseStatus
+				#self.parseMainFunc()
 		return self.parseStatus
+
 
 	#include< header_file > header | e
 	def parseImports(self):
@@ -91,3 +93,50 @@ class parser:
 		else:
 			print 'Expected #'
 			return False
+
+
+	# externalDec: extern|auto decStat ;
+	def parseExternalDec(self):
+		temp_index = self.cur_index
+
+		print 'Current', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] in self.stg_classes:
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			
+			decStat_retval = self.parseDecStat()
+			if decStat_retval == True:
+				temp_index = self.cur_index
+				print 'Current', self.symbol_table[temp_index]
+				if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+					temp_index += 1
+					self.cur_index = temp_index
+					return True
+				else:
+					print 'Expected ;'
+					return False
+			else:
+				return False
+
+	
+
+	# decStat: dataType identifier | dataType multipleDeclaration
+	def parseDecStat(self):
+		temp_index = self.cur_index
+
+		print 'Current', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'keyword':
+			if self.symbol_table[temp_index]['value'] in self.datatypes:
+				temp_index += 1
+
+				print 'Current', self.symbol_table[temp_index]
+				if self.symbol_table[temp_index]['token_type'] == 'identifier':
+					temp_index += 1
+					self.cur_index += temp_index - self.cur_index
+					return True
+				else:
+					print 'Expected identifer'
+					return False
+			else:
+				print 'Expected keyword, datatype id'
+				return False
