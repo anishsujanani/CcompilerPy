@@ -16,7 +16,7 @@ class parser:
 		for i in self.symbol_table:
 			print i
 
-		# E -> TE'
+		# E -> TEJust 
 		# E' -> +TE' | EPSILON
 		# for now, let t = id
 
