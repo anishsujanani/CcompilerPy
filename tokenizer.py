@@ -31,7 +31,7 @@ class tokenizer:
 		string_state = False
 		self.token_stream = token_stream
 		buf = ''
-		print self.token_stream
+		#print self.token_stream
 		pop_list = []
 		for i in range(0, len(self.token_stream)):
 			if self.token_stream[i] == '#include' and self.token_stream[i+1] == '<':
