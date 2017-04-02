@@ -151,6 +151,7 @@ class parser:
 			else:
 				print 'Expected keyword, datatype id'
 				return False
+		
 
 
 
@@ -178,7 +179,16 @@ class parser:
 						print 'Current', self.symbol_table[temp_index]
 						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
 							temp_index += 1
+							self.cur_index += temp_index - self.cur_index
 
+							# STATEMENTS
+							# statements:	declarationStatement ; | initializationStatement ; | assignmentStatement ; | conditionalStatement ; |
+							#do{statements} while(condition);
+							statement_retval = self.parseStatements()
+							while statement_retval == True:
+								statement_retval = self.parseStatements()
+
+							temp_index = self.cur_index
 							print 'Current', self.symbol_table[temp_index]
 							if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
 								temp_index += 1
@@ -202,4 +212,20 @@ class parser:
 			
 		else:
 			print 'Expected int'
+			return False
+
+
+	def parseStatements(self):
+		retval = self.parseDecStat()
+		if retval == True:
+			temp_index = self.cur_index 
+			print 'Current', self.symbol_table[temp_index]
+			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+				temp_index += 1
+				self.cur_index += temp_index - self.cur_index
+				return True
+			else:
+				print 'Expected ;'
+				return False
+		else:
 			return False
