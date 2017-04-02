@@ -41,13 +41,14 @@ class parser:
 
 		while(self.cur_index < len(self.symbol_table)-1):
 			self.parseStatus = self.parseImports()
-		
 			if self.parseStatus == False:
+				print 'PARSE EXT SADFISDJGSNDGLSFNG'
 				self.parseStatus = self.parseExternalDec()
-				if self.parseStatus == False:
-					return self.parseStatus
-				#self.parseMainFunc()
-		return self.parseStatus
+				while self.parseStatus == True:
+					self.parseStatus = self.parseExternalDec()
+				print 'PARSE MAIN SADFISDJGSNDGLSFNG'
+				self.parseStatus = self.parseMainFunc()
+				return self.parseStatus
 
 
 	#include< header_file > header | e
@@ -150,3 +151,55 @@ class parser:
 			else:
 				print 'Expected keyword, datatype id'
 				return False
+
+
+
+	# main: int main(){statements} | int main(int argc, char *argv[]){statements}
+	def parseMainFunc(self):
+		print 'Current index: %s' % self.cur_index
+		temp_index = self.cur_index	
+	
+		print 'Current', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] in self.datatypes:
+			print 'TRYING:',self.symbol_table[temp_index]
+			temp_index += 1
+			
+			print 'Current', self.symbol_table[temp_index]
+			if self.symbol_table[temp_index]['token_type'] == 'identifier' and self.symbol_table[temp_index]['value'] == 'main':
+				temp_index += 1
+				print 'Current', self.symbol_table[temp_index]
+				if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '(':
+					temp_index += 1
+					
+					print 'Current', self.symbol_table[temp_index]
+					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
+						temp_index += 1
+						
+						print 'Current', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
+							temp_index += 1
+
+							print 'Current', self.symbol_table[temp_index]
+							if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
+								temp_index += 1
+							
+								self.cur_index += temp_index - self.cur_index
+								print 'Current idex: ', self.cur_index
+								return True
+
+							else:
+								print 'Expected }'
+								return False
+						else:
+							print 'Expected {'
+							return False
+					else:
+						print 'Expected )'
+						return False
+				else:
+					print 'Expected ('
+					return False
+			
+		else:
+			print 'Expected int'
+			return False
