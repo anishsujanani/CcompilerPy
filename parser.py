@@ -153,6 +153,50 @@ class parser:
 				return False
 		
 
+	#initializationStatement: dataType identifier assignmentOperator E 
+	#                         | dataType multipleInitialization
+    # multipleInitialization: identifier assignmentOperator E, multipleInitialization 
+    #                         | identifier assignmentOperator E
+	def parseInitialization(self):
+		temp_index = self.cur_index
+		
+		print 'Current', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'keyword':
+			if self.symbol_table[temp_index]['value'] in self.datatypes:
+				temp_index += 1
+				print 'HERE 123'
+				print 'Current', self.symbol_table[temp_index]
+				if self.symbol_table[temp_index]['token_type'] == 'identifier':
+					temp_index += 1
+					print 'Current', self.symbol_table[temp_index]
+					
+					if self.symbol_table[temp_index]['token_type'] == 'asgnop':
+						
+						temp_index += 1
+						print 'Current', self.symbol_table[temp_index]
+						self.cur_index += temp_index - self.cur_index
+						expr_retval = self.parseExpr()
+					
+						if expr_retval == False:
+							return False
+					# while self.symbol_table[temp_index]['value'] == ',':
+					# 	temp_index += 1
+					# 	print 'Current', self.symbol_table[temp_index]
+					# 	if self.symbol_table[temp_index]['token_type'] == 'identifier':
+					# 			temp_index += 1
+					# 	else:
+					# 		print 'Expected indentifier after ,'
+					# 		return False
+					
+					#self.cur_index += temp_index - self.cur_index
+					return True
+				else:
+					print 'Expected identifer'
+					return False
+			else:
+				print 'Expected keyword, datatype id'
+				return False
+
 
 
 	# main: int main(){statements} | int main(int argc, char *argv[]){statements}
@@ -181,12 +225,14 @@ class parser:
 							temp_index += 1
 							self.cur_index += temp_index - self.cur_index
 
+
+
 							# STATEMENTS
-							# statements:	declarationStatement ; | initializationStatement ; | assignmentStatement ; | conditionalStatement ; |
-							#do{statements} while(condition);
 							statement_retval = self.parseStatements()
 							while statement_retval == True:
 								statement_retval = self.parseStatements()
+
+
 
 							temp_index = self.cur_index
 							print 'Current', self.symbol_table[temp_index]
@@ -215,10 +261,16 @@ class parser:
 			return False
 
 
+
+	# statements:	declarationStatement ; | initializationStatement ; | assignmentStatement ; | conditionalStatement ; |
+	#          for(initialization; assignment; expr) {statements}
 	def parseStatements(self):
-		
+		temp_index = self.cur_index
+		temp_index_copy = self.cur_index
+		# FIRST TRY SINGLE OR MULTIPLE DECLARATION STATEMENTS
 		retval = self.parseDecStat()
 		if retval == True:
+
 			temp_index = self.cur_index 
 			print 'Current', self.symbol_table[temp_index]
 			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
@@ -226,7 +278,151 @@ class parser:
 				self.cur_index += temp_index - self.cur_index
 				return True
 			else:
-				print 'Expected ;'
-				return False
+			#	print 'Expected ;'
+				self.cur_index = temp_index_copy
+				print 'PARSING ASGNMENT STAT'
+				print 'TRY: ', self.symbol_table[self.cur_index]
+				retval = self.parseInitialization()
+				if retval == True:
+					temp_index = self.cur_index 
+					print 'Current', self.symbol_table[temp_index]
+					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+						temp_index += 1
+						self.cur_index += temp_index - self.cur_index
+						return True
+				else:
+					print 'Expected ;'
+					return False
+		# IF SINGLE OR MULTIPLE DECLARATION STATEMENTS FAILED, TRY SINGLE OR MULTIPLE INITIALIZATION
+		# STATEMENTS
+		#if retval == False:
+		
+		#elif retval == False:
+		# assignmentstatement, condstatement, forloop
+
+
+
+	def parseExpr(self):
+		temp_index = self.cur_index
+		# E->F E1
+		e_retval = self.E()
+		return e_retval
+
+	def E(self):
+		# E->F E1
+		temp_index = self.cur_index
+		# F-> G F1
+		f_retval = self.F()
+		if f_retval == True:
+			temp_index = self.cur_index
+			e1_retval = self.E1()
+			return e1_retval
 		else:
 			return False
+
+	def F(self):
+		temp_index = self.cur_index
+		# F-> G F1
+		g_retval = self.G()
+		if g_retval == True:
+			temp_index = self.cur_index
+			f1_retval = self.F1()
+			return f1_retval
+		else:
+			return False
+	def G(self):
+		temp_index = self.cur_index
+		# G-> H G1
+		h_retval = self.H()
+		if h_retval == True:
+			temp_index = self.cur_index
+			g1_retval = self.G1()
+			return g1_retval
+		else:
+			return False
+
+	def H(self):
+		temp_index = self.cur_index
+		# H-> I H1
+		i_retval = self.I()
+		if i_retval == True:
+			temp_index = self.cur_index
+			h1_retval = self.H1()
+			return h1_retval
+		else:
+		 return False
+
+	def I(self):
+		temp_index = self.cur_index
+		# I-> - I | identifier | number
+		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '-':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			i_retval = self.I()
+		elif self.symbol_table[temp_index]['token_type'] == 'identifier':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			return True
+		elif self.symbol_table[temp_index]['token_type'] == 'const':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			return True
+		else:
+			return False
+
+	def H1(self):
+		# H1: / I H1 | e
+		temp_index = self.cur_index
+		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '/':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			i_retval = self.I()
+			if i_retval == True:
+				temp_index = self.cur_index
+				h1_retval = self.H1()
+
+		else:
+			return True
+
+	
+	def G1(self):
+		# G1 -> * H G1 | e
+		temp_index = self.cur_index
+		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '*':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			h_retval = self.H()
+			if h_retval == True:
+				temp_index = self.cur_index
+				g1_retval = self.G1()
+
+		else:
+			return True
+
+	def F1(self):
+		# F1: - G F1 | e
+		temp_index = self.cur_index
+		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '-':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			g_retval = self.G()
+			if g_retval == True:
+				temp_index = self.cur_index
+				f1_retval = self.F1()
+
+		else:
+			return True
+
+	def E1(self):
+		# E1: + F E1 | e
+		temp_index = self.cur_index
+		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '+':
+			temp_index += 1
+			self.cur_index += temp_index - self.cur_index
+			f_retval = self.F()
+			if f_retval == True:
+				temp_index = self.cur_index
+				e1_retval = self.E1()
+
+		else:
+			return True
