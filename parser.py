@@ -171,7 +171,7 @@ class parser:
 					print 'Current', self.symbol_table[temp_index]
 					
 					if self.symbol_table[temp_index]['token_type'] == 'asgnop':
-						
+						print '*******************Going to parseExpr()'
 						temp_index += 1
 						print 'Current', self.symbol_table[temp_index]
 						self.cur_index += temp_index - self.cur_index
@@ -285,7 +285,7 @@ class parser:
 				retval = self.parseInitialization()
 				if retval == True:
 					temp_index = self.cur_index 
-					print 'Current', self.symbol_table[temp_index]
+					print 'RETURN ******Current', self.symbol_table[temp_index]
 					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
 						temp_index += 1
 						self.cur_index += temp_index - self.cur_index
@@ -306,6 +306,7 @@ class parser:
 		temp_index = self.cur_index
 		# E->F E1
 		e_retval = self.E()
+		print 'parseExpr(): ', e_retval
 		return e_retval
 
 	def E(self):
@@ -316,6 +317,7 @@ class parser:
 		if f_retval == True:
 			temp_index = self.cur_index
 			e1_retval = self.E1()
+			print 'e1 retval from e: ', e1_retval
 			return e1_retval
 		else:
 			return False
@@ -327,6 +329,7 @@ class parser:
 		if g_retval == True:
 			temp_index = self.cur_index
 			f1_retval = self.F1()
+			print 'f1 retval forom f: ', f1_retval
 			return f1_retval
 		else:
 			return False
@@ -337,6 +340,7 @@ class parser:
 		if h_retval == True:
 			temp_index = self.cur_index
 			g1_retval = self.G1()
+			print 'g1 val from g: ', g1_retval
 			return g1_retval
 		else:
 			return False
@@ -348,6 +352,7 @@ class parser:
 		if i_retval == True:
 			temp_index = self.cur_index
 			h1_retval = self.H1()
+			print 'h1 val from h : ', h1_retval
 			return h1_retval
 		else:
 		 return False
@@ -423,6 +428,7 @@ class parser:
 			if f_retval == True:
 				temp_index = self.cur_index
 				e1_retval = self.E1()
+				
 
 		else:
 			return True
