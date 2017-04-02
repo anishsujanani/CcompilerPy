@@ -6,4 +6,6 @@ extern char c, y;
 
 int main(){
 	int a, b;
+	float a;
+	double c , d ;
 }

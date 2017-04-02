@@ -216,6 +216,7 @@ class parser:
 
 
 	def parseStatements(self):
+		
 		retval = self.parseDecStat()
 		if retval == True:
 			temp_index = self.cur_index 
