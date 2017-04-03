@@ -226,44 +226,57 @@ class parser:
 	# condStat -> if(statment){statement}
 	def parseCond(self):
 		temp_index = self.cur_index
-		print 'STARINT COND CURRENT: ', self.symbol_table[temp_index]
+		print '******** TRYING CONDSTATEMENT ******: ', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'if':
 			temp_index += 1
 			print 'CURRENT: ', self.symbol_table[temp_index]
 			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '(':
 				# STATEMENTS
 				temp_index += 1
-				self.cur_index += temp_index - self.cur_index
-				
-				statement_retval = self.parseStatements()
-				while statement_retval == True:
-					statement_retval = self.parseStatements()
-
-				temp_index = self.cur_index
-				print 'CURRENT: ', self.symbol_table[temp_index]
-				if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
+				if self.symbol_table[temp_index]['token_type'] == 'identifier':
 					temp_index += 1
-					print 'CURRENT: ', self.symbol_table[temp_index]
-					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
+					if self.symbol_table[temp_index]['token_type'] == 'relop':
 						temp_index += 1
-						# STATEMENTS
-						statement_retval = self.parseStatements()
-						while statement_retval == True:
-							statement_retval = self.parseStatements()
+						# check for expr here
+						self.cur_index += temp_index - self.cur_index
+						expr_retval = self.parseExpr()
+						if expr_retval == True:
+							temp_index = self.cur_index
+							print 'CURRENT: ', self.symbol_table[temp_index]
+							if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
+								temp_index += 1
+								print 'CURRENT: ', self.symbol_table[temp_index]
+								if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
+									temp_index += 1
+									self.cur_index += temp_index - self.cur_index
+									# STATEMENTS
+									statement_retval = self.parseStatements()
+									while statement_retval == True:
+										statement_retval = self.parseStatements()
 
-						temp_index = self.cur_index
-						print 'NOW123: ', self.symbol_table[temp_index]
-						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
-							print 'NOW234: ', self.symbol_table[temp_index]
-							return True
+									temp_index = self.cur_index
+									print 'NOW123: ', self.symbol_table[temp_index]
+									if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
+										print 'NOW234: ', self.symbol_table[temp_index]
+										return True
+									else:
+										print 'Expected }'
+										return False
+								else:
+									print 'Expected {'
+									return False
+							else:
+								print 'Expected )'
+								return False
 						else:
-							print 'Expected }'
+							print 'Expression error'
 							return False
+
 					else:
-						print 'Expected {'
+						print 'Expected relop'
 						return False
 				else:
-					print 'Expected )'
+					print 'Expected identifier'
 					return False
 			else:
 				print 'Expected ('
@@ -283,59 +296,92 @@ class parser:
 				self.cur_index += temp_index - self.cur_index
 				asgn_retval = self.parseAssignment()
 				if asgn_retval == True:
-						temp_index = self.cur_index
-						print 'RETURN ******Current', self.symbol_table[temp_index]
-						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+					temp_index = self.cur_index
+					print 'RETURN ******Current', self.symbol_table[temp_index]
+					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+						temp_index += 1
+						self.cur_index += temp_index - self.cur_index
+						print '*****Current', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['token_type'] == 'identifier':
 							temp_index += 1
-							self.cur_index += temp_index - self.cur_index
 							print '*****Current', self.symbol_table[temp_index]
-							if self.symbol_table[temp_index]['token_type'] == 'identifier':
+							if self.symbol_table[temp_index]['token_type'] == 'relop':
 								temp_index += 1
 								print '*****Current', self.symbol_table[temp_index]
-								if self.symbol_table[temp_index]['token_type'] == 'relop':
-									temp_index += 1
-									print '*****Current', self.symbol_table[temp_index]
-									self.cur_index += temp_index - self.cur_index
-									expr_retval = self.parseExpr()
-									print expr_retval
-									if expr_retval == True:
-										temp_index = self.cur_index
-										print '1234 RETURN ******Current', self.symbol_table[temp_index]
-										if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+								self.cur_index += temp_index - self.cur_index
+								expr_retval = self.parseExpr()
+								print expr_retval
+								if expr_retval == True:
+									temp_index = self.cur_index
+									print '1234 RETURN ******Current', self.symbol_table[temp_index]
+									if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+										temp_index += 1
+										self.cur_index += temp_index - self.cur_index
+										#print 'WNENGTKLENSGLKSDNGSD', self.symbol_table[temp_index]
+										print '*****Current', self.symbol_table[temp_index]
+										if self.symbol_table[temp_index]['token_type'] == 'identifier':
 											temp_index += 1
-											self.cur_index += temp_index - self.cur_index
-											#print 'WNENGTKLENSGLKSDNGSD', self.symbol_table[temp_index]
 											print '*****Current', self.symbol_table[temp_index]
-											if self.symbol_table[temp_index]['token_type'] == 'identifier':
+											if self.symbol_table[temp_index]['token_type'] == 'incop' or self.symbol_table[temp_index]['token_type'] == 'decop':
 												temp_index += 1
 												print '*****Current', self.symbol_table[temp_index]
-												if self.symbol_table[temp_index]['token_type'] == 'incop' or self.symbol_table[temp_index]['token_type'] == 'decop':
+												if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
 													temp_index += 1
 													print '*****Current', self.symbol_table[temp_index]
-													if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
+													if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
 														temp_index += 1
+														self.cur_index += temp_index - self.cur_index
+															# STATEMENTS
+														statement_retval = self.parseStatements()
+														while statement_retval == True:
+															statement_retval = self.parseStatements()
+
+														print '***************************** FOR STAT OVER *************'
+														temp_index = self.cur_index															# statements
 														print '*****Current', self.symbol_table[temp_index]
-														if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
+														if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
+															print 'FOR LOOP TOOK CARE OF }'
 															temp_index += 1
 															self.cur_index += temp_index - self.cur_index
-
-															# STATEMENTS
-															statement_retval = self.parseStatements()
-															while statement_retval == True:
-																statement_retval = self.parseStatements()
-
-
-
-															temp_index = self.cur_index
-															# statements
-															print '*****Current', self.symbol_table[temp_index]
-														if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
-															self.cur_index += temp_index - self.cur_index
 															return True
-							
+														else:
+															print 'Expected }'
+															return False
+													else:
+														print 'Expected {'
+														return False
+												else:
+													print 'Expected ('
+													return False
+											else:
+												print 'Expected ++ or --'
+												return False
+										else:
+											print 'Expected identifier'
+											return False
+									else:
+										print 'Expected ;'
+										return False
+								else:
+									print 'Expression error'
+									return False
+							else:
+								print 'Expected relop'
+								return False
 						else:
-							print 'Expected ;'
+							print 'Expected identifier'
 							return False
+					else:
+						print 'Expected ;'
+						return False
+				else:
+					print 'Assignment error'
+					return False
+			else:
+				print 'Expected ('
+				return False
+		else:
+			return False
 
 
 	# main: int main(){statements} | int main(int argc, char *argv[]){statements}
@@ -404,6 +450,7 @@ class parser:
 	# statements:	declarationStatement ; | initializationStatement ; | assignmentStatement ; | conditionalStatement ; |
 	#          for(initialization; assignment; expr) {statements}
 	def parseStatements(self):
+
 		temp_index = self.cur_index
 		temp_index_copy = self.cur_index
 		# FIRST TRY SINGLE OR MULTIPLE DECLARATION STATEMENTS
@@ -456,6 +503,16 @@ class parser:
 						if retval == True:
 							temp_index = self.cur_index
 							return True
+						else: # try conditional
+							self.cur_index = temp_index_copy
+							retval = self.parseCond()
+							if retval == True:
+								temp_index = self.cur_index
+								return True
+							else:
+								print 'Coudn\'t match construct, going back'
+								return False
+
 					# else: # ASSIGNMENT DIDNT WORK, TRY CONDITIONAL
 					# 	self.cur_index = temp_index_copy
 					# 	print '********** TRYING CONDSTAT **********'
