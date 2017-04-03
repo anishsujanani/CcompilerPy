@@ -21,12 +21,14 @@ class parser:
 			print i
 
 
-		self.parseProgram()
-		if self.parseStatus == True:
-			print 'Parse successful'
-		else:
-			print 'Parse failed'
-
+		try:
+			self.parseProgram()
+			if self.parseStatus == True:
+				print 'Parse successful'
+			else:
+				print 'Parse failed'
+		except IndexError:
+			print 'Bracket mismatch'
 
 
 	# Requests a token from the lexer
