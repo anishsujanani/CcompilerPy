@@ -142,7 +142,8 @@ class parser:
 						else:
 							print 'Expected indentifier after ,'
 							return False
-					
+					if self.symbol_table[temp_index]['value'] == '=':
+						return False
 					self.cur_index += temp_index - self.cur_index
 					return True
 				else:
@@ -179,6 +180,15 @@ class parser:
 					
 						if expr_retval == False:
 							return False
+
+						temp_index = self.cur_index
+						print 'NEXT: ', self.symbol_table[temp_index]
+						while self.symbol_table[temp_index]['value'] == ',':
+							temp_index += 1
+							expr_retval = self.parseExpr()
+
+						if expr_retval == False:
+							return False
 					# while self.symbol_table[temp_index]['value'] == ',':
 					# 	temp_index += 1
 					# 	print 'Current', self.symbol_table[temp_index]
@@ -197,6 +207,135 @@ class parser:
 				print 'Expected keyword, datatype id'
 				return False
 
+
+	#parseAsgn -> identifier asgnop E
+	def parseAssignment(self):
+		temp_index = self.cur_index
+		if self.symbol_table[temp_index]['token_type'] == 'identifier':
+			temp_index += 1
+			if self.symbol_table[temp_index]['token_type'] == 'asgnop':
+				temp_index += 1
+				self.cur_index += temp_index - self.cur_index
+				print 'TRYING EXPR with: ', self.symbol_table[temp_index]
+				expr_retval = self.parseExpr()
+				if expr_retval == False:
+					return False
+				return True
+
+
+	# condStat -> if(statment){statement}
+	def parseCond(self):
+		temp_index = self.cur_index
+		print 'STARINT COND CURRENT: ', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'if':
+			temp_index += 1
+			print 'CURRENT: ', self.symbol_table[temp_index]
+			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '(':
+				# STATEMENTS
+				temp_index += 1
+				self.cur_index += temp_index - self.cur_index
+				
+				statement_retval = self.parseStatements()
+				while statement_retval == True:
+					statement_retval = self.parseStatements()
+
+				temp_index = self.cur_index
+				print 'CURRENT: ', self.symbol_table[temp_index]
+				if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
+					temp_index += 1
+					print 'CURRENT: ', self.symbol_table[temp_index]
+					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
+						temp_index += 1
+						# STATEMENTS
+						statement_retval = self.parseStatements()
+						while statement_retval == True:
+							statement_retval = self.parseStatements()
+
+						temp_index = self.cur_index
+						print 'NOW123: ', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
+							print 'NOW234: ', self.symbol_table[temp_index]
+							return True
+						else:
+							print 'Expected }'
+							return False
+					else:
+						print 'Expected {'
+						return False
+				else:
+					print 'Expected )'
+					return False
+			else:
+				print 'Expected ('
+				return False
+		else:
+			return False
+
+	# for(assignmentStatement, identifier relop E; identifier decop/incop)
+	def parseFor(self):
+		print '********** TRYING FOR STATEMENT ***********'
+		temp_index = self.cur_index
+		print 'parseFor(): ', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'for':
+			temp_index += 1
+			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '(':
+				temp_index += 1
+				self.cur_index += temp_index - self.cur_index
+				asgn_retval = self.parseAssignment()
+				if asgn_retval == True:
+						temp_index = self.cur_index
+						print 'RETURN ******Current', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+							temp_index += 1
+							self.cur_index += temp_index - self.cur_index
+							print '*****Current', self.symbol_table[temp_index]
+							if self.symbol_table[temp_index]['token_type'] == 'identifier':
+								temp_index += 1
+								print '*****Current', self.symbol_table[temp_index]
+								if self.symbol_table[temp_index]['token_type'] == 'relop':
+									temp_index += 1
+									print '*****Current', self.symbol_table[temp_index]
+									self.cur_index += temp_index - self.cur_index
+									expr_retval = self.parseExpr()
+									print expr_retval
+									if expr_retval == True:
+										temp_index = self.cur_index
+										print '1234 RETURN ******Current', self.symbol_table[temp_index]
+										if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+											temp_index += 1
+											self.cur_index += temp_index - self.cur_index
+											#print 'WNENGTKLENSGLKSDNGSD', self.symbol_table[temp_index]
+											print '*****Current', self.symbol_table[temp_index]
+											if self.symbol_table[temp_index]['token_type'] == 'identifier':
+												temp_index += 1
+												print '*****Current', self.symbol_table[temp_index]
+												if self.symbol_table[temp_index]['token_type'] == 'incop' or self.symbol_table[temp_index]['token_type'] == 'decop':
+													temp_index += 1
+													print '*****Current', self.symbol_table[temp_index]
+													if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
+														temp_index += 1
+														print '*****Current', self.symbol_table[temp_index]
+														if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
+															temp_index += 1
+															self.cur_index += temp_index - self.cur_index
+
+															# STATEMENTS
+															statement_retval = self.parseStatements()
+															while statement_retval == True:
+																statement_retval = self.parseStatements()
+
+
+
+															temp_index = self.cur_index
+															# statements
+															print '*****Current', self.symbol_table[temp_index]
+														if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
+															self.cur_index += temp_index - self.cur_index
+															return True
+							
+						else:
+							print 'Expected ;'
+							return False
 
 
 	# main: int main(){statements} | int main(int argc, char *argv[]){statements}
@@ -268,19 +407,20 @@ class parser:
 		temp_index = self.cur_index
 		temp_index_copy = self.cur_index
 		# FIRST TRY SINGLE OR MULTIPLE DECLARATION STATEMENTS
+		print '******** TRYING DECSTAT ****'
 		retval = self.parseDecStat()
+		print retval
 		if retval == True:
-
 			temp_index = self.cur_index 
 			print 'Current', self.symbol_table[temp_index]
 			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
 				temp_index += 1
 				self.cur_index += temp_index - self.cur_index
 				return True
-			else:
+		else: # IF DECSTAT DOESN'T WORK, GO BACK TO OLD_INDEX AND TRY INITIALIZATION
 			#	print 'Expected ;'
+				print '******** TRYING INITSTAT ****'
 				self.cur_index = temp_index_copy
-				print 'PARSING ASGNMENT STAT'
 				print 'TRY: ', self.symbol_table[self.cur_index]
 				retval = self.parseInitialization()
 				if retval == True:
@@ -290,16 +430,42 @@ class parser:
 						temp_index += 1
 						self.cur_index += temp_index - self.cur_index
 						return True
+					else:
+						print 'Expected ;'
+						return False
+						# INITSTAT DIDN'T WORK, TRY ASSIGNMENT
 				else:
-					print 'Expected ;'
-					return False
-		# IF SINGLE OR MULTIPLE DECLARATION STATEMENTS FAILED, TRY SINGLE OR MULTIPLE INITIALIZATION
-		# STATEMENTS
-		#if retval == False:
+					self.cur_index = temp_index_copy
+					print '*********** TRING ASGN STAT ***********'
+					print 'TRY: ', self.symbol_table[temp_index]
+					retval = self.parseAssignment()
+					if retval == True:
+						temp_index = self.cur_index
+						print 'RETURN ******Current', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+							temp_index += 1
+							self.cur_index += temp_index - self.cur_index
+							return True
+						else:
+							print 'Expected ;'
+							return False
+					else: # ASGNSTAT DIDN:T WORK, TRY FOR LOOP
+						self.cur_index = temp_index_copy
+						print 'ABOUT TO DO: ', self.symbol_table[self.cur_index]
+						retval = self.parseFor()
+						if retval == True:
+							temp_index = self.cur_index
+							return True
+					# else: # ASSIGNMENT DIDNT WORK, TRY CONDITIONAL
+					# 	self.cur_index = temp_index_copy
+					# 	print '********** TRYING CONDSTAT **********'
+					# 	print self.symbol_table[self.cur_index]
+					# 	retval = self.parseCond()
+					# 	if retval == True:
+					# 		temp_index = self.cur_index
+					# 	else:
+					# 		return False
 		
-		#elif retval == False:
-		# assignmentstatement, condstatement, forloop
-
 
 
 	def parseExpr(self):
@@ -428,7 +594,17 @@ class parser:
 			if f_retval == True:
 				temp_index = self.cur_index
 				e1_retval = self.E1()
-				
+
 
 		else:
 			return True
+
+
+
+
+
+
+
+
+
+
