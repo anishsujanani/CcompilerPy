@@ -97,6 +97,7 @@ class lexer:
 		#print 'Now calling tokenizer'
 		self.tokenizer = tokenizer()
 		self.symbol_table = self.tokenizer.tokenize(self.token_stream)
+		#print '\n\nSymTab: ', self.symbol_table
 		return self.symbol_table
 
 
