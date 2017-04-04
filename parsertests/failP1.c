@@ -6,7 +6,7 @@ auto float d, a;
 extern char c, y;
 
 int main(){
-/*	int a;
+	int a;
 	int a;
 	int a,b;
 	int a = 10;
@@ -17,7 +17,7 @@ int main(){
 		for(j = 0; j < 10; j++) {
 			int b = 20
 		}
-	}*/
+	}
 
 	/*
 		FAIL TEST CASES FOR 'FOR':
