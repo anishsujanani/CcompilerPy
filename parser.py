@@ -187,10 +187,18 @@ class parser:
 						print 'NEXT: ', self.symbol_table[temp_index]
 						while self.symbol_table[temp_index]['value'] == ',':
 							temp_index += 1
-							expr_retval = self.parseExpr()
-
-						if expr_retval == False:
-							return False
+							if self.symbol_table[temp_index]['token_type'] == 'identifier':
+								print self.symbol_table[temp_index]
+								temp_index += 1
+								if self.symbol_table[temp_index]['token_type'] == 'asgnop':
+									print self.symbol_table[temp_index]
+									temp_index += 1
+									print self.symbol_table[temp_index]
+									self.cur_index += temp_index - self.cur_index
+									expr_retval = self.parseExpr()
+							
+									if expr_retval == False:
+										return False
 					# while self.symbol_table[temp_index]['value'] == ',':
 					# 	temp_index += 1
 					# 	print 'Current', self.symbol_table[temp_index]
