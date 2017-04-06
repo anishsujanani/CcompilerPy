@@ -38,4 +38,8 @@ int main(){
 
 	int a = 0, b = 0;
 	int x = 10;
+
+	return 2;
+	// return a
+
 }
