@@ -38,7 +38,7 @@ int main(){
 
 	int a = 0, b = 0;
 	int x = 10;
-
+	printf("x = %d", x);
 	return 2;
 	// return a
 
