@@ -1,12 +1,12 @@
 #include <stdio.h>
 
-/*extern int a;
+extern int a;
 extern int b;
 auto float d, a;
-extern char c, y;*/
+extern char c, y;
 
 int main(){
-	/*int a;
+	int a;
 	int a;
 	int a,b;
 	int a = 10;
@@ -20,13 +20,13 @@ int main(){
 	}
 
 	
-		FAIL TEST CASES FOR 'FOR':
+/*		FAIL TEST CASES FOR 'FOR':
 		for()
 		for(;)
 		for; ;)
 		for(i;)
 		for(i; {}
-	
+*/	
 
 	for(int i = 0; i < 10; i++) {
 		int a = 10;
@@ -34,7 +34,7 @@ int main(){
 		for(int j = 0; j != 10; --j) {
 			int XYZ;
 		}
-	}*/
+	}
 
 	int a = 0, b = 0;
 	int x = 10;

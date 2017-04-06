@@ -616,7 +616,7 @@ class parser:
 			return False
 
 
-
+	# return -> return E | return id
 	def parseReturn(self):
 		temp_index = self.cur_index
 		print 'TRYING: ', self.symbol_table[temp_index]
@@ -629,7 +629,7 @@ class parser:
 				return True
 			# return EXPR
 			else:
-				self.cur_index += temp_index - self.cur_index
+				self.cur_index += temp_index - self.cur_index	
 				expr_retval = self.parseExpr();
 				temp_index = self.cur_index
 				if expr_retval == True:
@@ -641,6 +641,82 @@ class parser:
 						temp_index += 1
 						self.cur_index += temp_index - self.cur_index
 						return True
+
+
+	# spfunc -> printf(const, E|id)
+	def parseSPFunc(self):
+		temp_index = self.cur_index
+		print 'Trying: ', self.symbol_table[temp_index]
+		if self.symbol_table[temp_index]['token_type'] == 'spfuncs':
+			temp_index += 1
+			print 'Trying: ', self.symbol_table[temp_index]
+			if self.symbol_table[temp_index]['value'] == '(':
+				temp_index += 1
+				print 'Trying: ', self.symbol_table[temp_index]
+				if self.symbol_table[temp_index]['value'] == '"':
+					temp_index += 1
+					print 'Trying: ', self.symbol_table[temp_index]
+					if self.symbol_table[temp_index]['token_type'] == 'const':
+						temp_index += 1
+						print 'Trying: ', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['value'] == '"':
+							temp_index += 1
+							print 'Trying!!!!!!!!!!!: ', self.symbol_table[temp_index]
+							if self.symbol_table[temp_index]['value'] == ')':
+								temp_index += 1
+								self.cur_index += temp_index - self.cur_index
+								return True
+						else:
+							print 'Expected closing "'
+							return False
+							
+							
+
+						print 'Trying: ', self.symbol_table[temp_index]
+						if self.symbol_table[temp_index]['value'] == ',':
+							temp_index += 1
+							# printf("SOMETHING", )
+							print 'Trying############: ', self.symbol_table[temp_index]
+							if self.symbol_table[temp_index]['token_type'] == 'identifier':
+								temp_index += 1
+								# printf("SOMEHING", a)
+								while self.symbol_table[temp_index]['value'] == ',':
+									temp_index += 1
+									print 'Current', self.symbol_table[temp_index]
+									if self.symbol_table[temp_index]['token_type'] == 'identifier':
+										temp_index += 1
+									else:
+										print 'Expected indentifier after ,'
+										return False
+							else:
+								print 'Trying: ', self.symbol_table[temp_index]
+								self.cur_index += temp_index - self.cur_index
+								expr_retval = self.parseExpr()
+								temp_index = self.cur_index
+								if expr_retval == False or expr_retval == None:
+									return False
+								while self.symbol_table[temp_index]['value'] == ',':
+									temp_index += 1
+									self.cur_index += temp_index - self.cur_index
+									expr_retval = self.parseExpr()
+									temp_index = self.cur_index
+									#temp_index += 1
+									if expr_retval == False or expr_retval == None:
+										return False
+
+						else:
+							print 'Expected parameter after ,'
+							return False
+
+					# printf("SOMETHING")
+					print 'Trying: ', self.symbol_table[temp_index]
+					if self.symbol_table[temp_index]['value'] == ')':
+							temp_index += 1
+							self.cur_index += temp_index - self.cur_index
+							return True
+					else:
+						return False
+
 
 	# statements:	declarationStatement ; | initializationStatement ; | assignmentStatement ; | conditionalStatement ; |
 	#          for(initialization; assignment; expr) {statements}
@@ -714,9 +790,19 @@ class parser:
 										temp_index += 1
 										self.cur_index += temp_index - self.cur_index
 										return True
-								else:
-									print 'Coudn\'t match construct, going back'
-									return False
+								else: #try printf()
+									self.cur_index = temp_index_copy
+									print 'CURRENT: ', self.symbol_table[temp_index]
+									retval = self.parseSPFunc()
+									if retval == True:
+										temp_index = self.cur_index
+										if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
+											temp_index += 1
+											self.cur_index += temp_index - self.cur_index
+											return True 
+										else:
+											print 'Coudn\'t match construct, going back'
+											return False
 
 					# else: # ASSIGNMENT DIDNT WORK, TRY CONDITIONAL
 					# 	self.cur_index = temp_index_copy

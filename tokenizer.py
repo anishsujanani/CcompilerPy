@@ -23,7 +23,7 @@ class tokenizer:
 		self.asgnop = ['=']
 		self.logop = ['!', '||', '&&']
 		self.bitop = ['|', '&', '^']
-
+		self.spfuncs = ['printf']
 	
 
 	def tokenize(self, token_stream):
@@ -91,6 +91,9 @@ class tokenizer:
 
 			elif i in self.bitop:
 				self.symbol_table.append({'token_type': 'bitop', 'value': i})
+
+			elif i in self.spfuncs:
+				self.symbol_table.append({'token_type': 'spfuncs', 'value': i})
 
 			elif '.c' in i or '.h' in i:
 				self.symbol_table.append({'token_type': 'const', 'value': i})
