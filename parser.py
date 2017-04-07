@@ -824,6 +824,7 @@ class parser:
 		return e_retval
 
 	def E(self):
+		print '^^^^^^^^ E ^^^^^^^^^^^^^'
 		# E->F E1
 		temp_index = self.cur_index
 		# F-> G F1
@@ -837,6 +838,7 @@ class parser:
 			return False
 
 	def F(self):
+		print '^^^^^^^^ F ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# F-> G F1
 		g_retval = self.G()
@@ -848,6 +850,7 @@ class parser:
 		else:
 			return False
 	def G(self):
+		print '^^^^^^^^ G ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# G-> H G1
 		h_retval = self.H()
@@ -860,6 +863,7 @@ class parser:
 			return False
 
 	def H(self):
+		print '^^^^^^^^ H ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# H-> I H1
 		i_retval = self.I()
@@ -872,17 +876,22 @@ class parser:
 		 return False
 
 	def I(self):
+		print '^^^^^^^^ I ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# I-> - I | identifier | number
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '-':
+			print '** FOUND UNARY MINUS'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			i_retval = self.I()
+			return i_retval
+
 		elif self.symbol_table[temp_index]['token_type'] == 'identifier':
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			return True
 		elif self.symbol_table[temp_index]['token_type'] == 'const':
+			print 'FOUND I : *****************', self.symbol_table[temp_index]
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			return True
@@ -890,58 +899,67 @@ class parser:
 			return False
 
 	def H1(self):
+		print '^^^^^^^^ H1 ^^^^^^^^^^^^^'
 		# H1: / I H1 | e
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '/':
+			print '**** Found /'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			i_retval = self.I()
 			if i_retval == True:
 				temp_index = self.cur_index
 				h1_retval = self.H1()
-
+				return h1_retval
 		else:
 			return True
 
 	
 	def G1(self):
+		print '^^^^^^^^ G1 ^^^^^^^^^^^^^'
 		# G1 -> * H G1 | e
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '*':
+			print '** FOUND *'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			h_retval = self.H()
 			if h_retval == True:
 				temp_index = self.cur_index
 				g1_retval = self.G1()
-
+				return g1_retval
 		else:
 			return True
 
 	def F1(self):
 		# F1: - G F1 | e
+		print '^^^^^^^^ F1 ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '-':
+			print '** FOUND -'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			g_retval = self.G()
 			if g_retval == True:
 				temp_index = self.cur_index
 				f1_retval = self.F1()
-
+				return f1_retval
 		else:
 			return True
 
 	def E1(self):
+		print '^^^^^^^^ E1 ^^^^^^^^^^^^^'
 		# E1: + F E1 | e
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '+':
+			print 'FOUND + '
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			f_retval = self.F()
 			if f_retval == True:
 				temp_index = self.cur_index
 				e1_retval = self.E1()
+				return e1_retval
 
 
 		else:
