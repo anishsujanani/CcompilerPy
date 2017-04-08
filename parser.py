@@ -9,7 +9,7 @@ class parser:
 		self.cur_index = 0		
 		self.parseStatus = False
 		self.datatypes = ['int', 'float', 'char', 'double', 'void']
-		self.stg_classes = ['auto', 'extern', 'register', 'static']
+		self.stg_classes = ['auto', 'extern', 'register', 'static', 'volatile']
 
 
 	# Entry point parser control function
@@ -44,17 +44,16 @@ class parser:
 		while(self.cur_index < len(self.symbol_table)-1):
 			self.parseStatus = self.parseImports()
 			if self.parseStatus == False:
-				print 'PARSE EXT SADFISDJGSNDGLSFNG'
 				self.parseStatus = self.parseExternalDec()
 				while self.parseStatus == True:
 					self.parseStatus = self.parseExternalDec()
-				print 'PARSE MAIN SADFISDJGSNDGLSFNG'
 				self.parseStatus = self.parseMainFunc()
 				return self.parseStatus
 
 
 	#include< header_file > header | e
 	def parseImports(self):
+		print '\n\n**** TRYING IMPORTS *******'
 		print 'Current index: %s' % self.cur_index
 		temp_index = self.cur_index	
 	
@@ -100,6 +99,7 @@ class parser:
 
 	# externalDec: extern|auto decStat ;
 	def parseExternalDec(self):
+		print '\n\n**** TRYING EXTERNAL DECLARATIONS *******'
 		temp_index = self.cur_index
 
 		print 'Current', self.symbol_table[temp_index]
@@ -125,6 +125,7 @@ class parser:
 
 	# decStat: dataType identifier | dataType multipleDeclaration
 	def parseDecStat(self):
+		print '\n\n**** TRYING DECLARATION STATEMENTS *******'
 		temp_index = self.cur_index
 
 		print 'Current', self.symbol_table[temp_index]
@@ -162,19 +163,17 @@ class parser:
     #                         | identifier assignmentOperator E
 	def parseInitialization(self):
 		temp_index = self.cur_index
-		
+		print '\n\n**** TRYING INITIALIZATION *******'
 		print 'Current', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'keyword':
 			if self.symbol_table[temp_index]['value'] in self.datatypes:
 				temp_index += 1
-				print 'HERE 123'
 				print 'Current', self.symbol_table[temp_index]
 				if self.symbol_table[temp_index]['token_type'] == 'identifier':
 					temp_index += 1
 					print 'Current', self.symbol_table[temp_index]
 					
 					if self.symbol_table[temp_index]['token_type'] == 'asgnop':
-						print '*******************Going to parseExpr()'
 						temp_index += 1
 						print 'Current', self.symbol_table[temp_index]
 						self.cur_index += temp_index - self.cur_index
@@ -184,7 +183,7 @@ class parser:
 							return False
 
 						temp_index = self.cur_index
-						print 'NEXT: ', self.symbol_table[temp_index]
+						print 'TRYING: ', self.symbol_table[temp_index]
 						while self.symbol_table[temp_index]['value'] == ',':
 							temp_index += 1
 							if self.symbol_table[temp_index]['token_type'] == 'identifier':
@@ -211,6 +210,7 @@ class parser:
 
 	#parseAsgn -> identifier asgnop E
 	def parseAssignment(self):
+		print '\n\n**** TRYING ASSIGNMENT *******'
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'identifier':
 			temp_index += 1
@@ -226,8 +226,8 @@ class parser:
 
 	# condStat -> if(statment){statement}
 	def parseCond(self):
+		print '\n\n**** TRYING CONDITIONAL *******'
 		temp_index = self.cur_index
-		print '******** TRYING CONDSTATEMENT ******: ', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'if':
 			temp_index += 1
 			print 'CURRENT: ', self.symbol_table[temp_index]
@@ -258,7 +258,6 @@ class parser:
 									temp_index = self.cur_index
 									print 'NOW123: ', self.symbol_table[temp_index]
 									if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
-										print 'NOW234: ', self.symbol_table[temp_index]
 										return True
 									else:
 										print 'Expected }'
@@ -291,8 +290,7 @@ class parser:
 	# can be declaration, initialization. relop, inc/decop
 	def parseForE1(self):
 		temp_index = self.cur_index
-		print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n'
-		print 'Checking conidition e1(): ', self.symbol_table[temp_index]
+		print ' ************ CHECKING FOR CONDITION: ******* ', self.symbol_table[temp_index]
 		
 		# blank, ie. ;
 		if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ';':
@@ -392,8 +390,7 @@ class parser:
 	# can be blank, ie. next = ), can be identifier alone, can be assignment, can be declaration
 	def parseForE3(self):
 		temp_index = self.cur_index
-		print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n'
-		print 'Checking conidition e1(): ', self.symbol_table[temp_index]
+		print '*********** CHECKING FOR CONDITION: ******* ', self.symbol_table[temp_index]
 		
 		# blank, ie. ;
 		if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
@@ -424,11 +421,9 @@ class parser:
 			temp_index += 1
 			#identifier alone
 			if self.symbol_table[temp_index]['value'] == ')':
-				print 'solo'
 				self.cur_index += temp_index - self.cur_index
 				return True
 			else:
-				print 'NOT SOLO'
 				temp_index -= 1
 	
 
@@ -485,7 +480,6 @@ class parser:
 	def parseFor(self):
 		print '********** TRYING FOR STATEMENT ***********'
 		temp_index = self.cur_index
-		print 'parseFor(): ', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'for':
 			temp_index += 1
 			if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '(':
@@ -504,22 +498,19 @@ class parser:
 					if forcond == True:
 						forcond = self.parseForE3()
 						print 'for E3 = ', forcond
-				print '********* DONE PARSING FOR CONDITIONS ************'
-
+				
 				if forcond == False:
-					#return False
 					print 'failed at: ', self.symbol_table[self.cur_index]
 					return False
 
 
 				temp_index = self.cur_index 
-				print '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22', self.symbol_table[temp_index]
 
 
 
 				if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == ')':
 					temp_index += 1
-					print '*****Current', self.symbol_table[temp_index]
+					print 'CURRENT: ', self.symbol_table[temp_index]
 					if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '{':
 						temp_index += 1
 						self.cur_index += temp_index - self.cur_index
@@ -529,9 +520,8 @@ class parser:
 						while statement_retval == True:
 							statement_retval = self.parseStatements()
 
-						print '***************************** FOR STAT OVER *************'
 						temp_index = self.cur_index															# statements
-						print '*****Current', self.symbol_table[temp_index]
+						print 'CURRENT: ', self.symbol_table[temp_index]
 				 		if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
 							print 'FOR LOOP TOOK CARE OF }'
 							temp_index += 1
@@ -556,6 +546,7 @@ class parser:
 
 	# main: int main(){statements} | int main(int argc, char *argv[]){statements}
 	def parseMainFunc(self):
+		print '\n\n**** TRYING MAIN FUNCTION *******'
 		print 'Current index: %s' % self.cur_index
 		temp_index = self.cur_index	
 	
@@ -581,7 +572,7 @@ class parser:
 							self.cur_index += temp_index - self.cur_index
 
 
-
+							print '\n\n**** TRYING STATEMENTS *******'
 							# STATEMENTS
 							statement_retval = self.parseStatements()
 							while statement_retval == True:
@@ -590,12 +581,12 @@ class parser:
 
 
 							temp_index = self.cur_index
-							print 'Current', self.symbol_table[temp_index]
+							print 'CURRENT', self.symbol_table[temp_index]
 							if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':
 								temp_index += 1
-							
+								print 'MAIN TOOK CARE OF }'
 								self.cur_index += temp_index - self.cur_index
-								print 'Current idex: ', self.cur_index
+								#print 'Current idex: ', self.cur_index
 								return True
 
 							else:
@@ -618,11 +609,12 @@ class parser:
 
 	# return -> return E | return id
 	def parseReturn(self):
+		print '\n\n**** TRYING RETURN *******'
 		temp_index = self.cur_index
-		print 'TRYING: ', self.symbol_table[temp_index]
+		print 'CURRENT : ', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'keyword' and self.symbol_table[temp_index]['value'] == 'return':
 			temp_index += 1
-			print 'TRYING: ', self.symbol_table[temp_index]
+			print 'CURRENT : ', self.symbol_table[temp_index]
 			# return
 			if self.symbol_table[temp_index]['value'] == ';':
 				self.cur_index += temp_index - self.cur_index
@@ -645,6 +637,7 @@ class parser:
 
 	# spfunc -> printf(const, E|id)
 	def parseSPFunc(self):
+		print '\n\n**** TRYING SPECIAL FUNCTIONS *******'
 		temp_index = self.cur_index
 		print 'Trying: ', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'spfuncs':
@@ -672,24 +665,24 @@ class parser:
 							
 							
 
-						print 'Trying: ', self.symbol_table[temp_index]
+						print 'CURRENT: ', self.symbol_table[temp_index]
 						if self.symbol_table[temp_index]['value'] == ',':
 							temp_index += 1
 							# printf("SOMETHING", )
-							print 'Trying############: ', self.symbol_table[temp_index]
+							print 'CURRENT : ', self.symbol_table[temp_index]
 							if self.symbol_table[temp_index]['token_type'] == 'identifier':
 								temp_index += 1
 								# printf("SOMEHING", a)
 								while self.symbol_table[temp_index]['value'] == ',':
 									temp_index += 1
-									print 'Current', self.symbol_table[temp_index]
+									print 'CURRENT', self.symbol_table[temp_index]
 									if self.symbol_table[temp_index]['token_type'] == 'identifier':
 										temp_index += 1
 									else:
 										print 'Expected indentifier after ,'
 										return False
 							else:
-								print 'Trying: ', self.symbol_table[temp_index]
+								print 'CURRENT: ', self.symbol_table[temp_index]
 								self.cur_index += temp_index - self.cur_index
 								expr_retval = self.parseExpr()
 								temp_index = self.cur_index
@@ -709,7 +702,7 @@ class parser:
 							return False
 
 					# printf("SOMETHING")
-					print 'Trying: ', self.symbol_table[temp_index]
+					print 'CURRENT: ', self.symbol_table[temp_index]
 					if self.symbol_table[temp_index]['value'] == ')':
 							temp_index += 1
 							self.cur_index += temp_index - self.cur_index
@@ -725,7 +718,6 @@ class parser:
 		temp_index = self.cur_index
 		temp_index_copy = self.cur_index
 		# FIRST TRY SINGLE OR MULTIPLE DECLARATION STATEMENTS
-		print '******** TRYING DECSTAT ****'
 		retval = self.parseDecStat()
 		print retval
 		if retval == True:
@@ -737,7 +729,6 @@ class parser:
 				return True
 		else: # IF DECSTAT DOESN'T WORK, GO BACK TO OLD_INDEX AND TRY INITIALIZATION
 			#	print 'Expected ;'
-				print '******** TRYING INITSTAT ****'
 				self.cur_index = temp_index_copy
 				print 'TRY: ', self.symbol_table[self.cur_index]
 				retval = self.parseInitialization()
@@ -754,7 +745,6 @@ class parser:
 						# INITSTAT DIDN'T WORK, TRY ASSIGNMENT
 				else:
 					self.cur_index = temp_index_copy
-					print '*********** TRING ASGN STAT ***********'
 					print 'TRY: ', self.symbol_table[temp_index]
 					retval = self.parseAssignment()
 					if retval == True:
@@ -769,7 +759,6 @@ class parser:
 							return False
 					else: # ASGNSTAT DIDN:T WORK, TRY FOR LOOP
 						self.cur_index = temp_index_copy
-						print 'ABOUT TO DO: ', self.symbol_table[self.cur_index]
 						retval = self.parseFor()
 						if retval == True:
 							temp_index = self.cur_index
@@ -782,6 +771,7 @@ class parser:
 								return True
 							else: # Try return statement
 								self.cur_index = temp_index_copy
+								print '*********** TRYING RETURN ********'
 								print 'CURRENT: ', self.symbol_table[temp_index]
 								retval = self.parseReturn()
 								if retval == True:
@@ -791,6 +781,7 @@ class parser:
 										self.cur_index += temp_index - self.cur_index
 										return True
 								else: #try printf()
+									print '*********** TRYING SP FUNCTIONS ********'
 									self.cur_index = temp_index_copy
 									print 'CURRENT: ', self.symbol_table[temp_index]
 									retval = self.parseSPFunc()
@@ -820,11 +811,11 @@ class parser:
 		temp_index = self.cur_index
 		# E->F E1
 		e_retval = self.E()
-		print 'parseExpr(): ', e_retval
+		#print 'parseExpr(): ', e_retval
 		return e_retval
 
 	def E(self):
-		print '^^^^^^^^ E ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ E ^^^^^^^^^^^^^'
 		# E->F E1
 		temp_index = self.cur_index
 		# F-> G F1
@@ -832,55 +823,55 @@ class parser:
 		if f_retval == True:
 			temp_index = self.cur_index
 			e1_retval = self.E1()
-			print 'e1 retval from e: ', e1_retval
+			#print 'e1 retval from e: ', e1_retval
 			return e1_retval
 		else:
 			return False
 
 	def F(self):
-		print '^^^^^^^^ F ^^^^^^^^^^^^^'
+		#print '^^^^^^^^ F ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# F-> G F1
 		g_retval = self.G()
 		if g_retval == True:
 			temp_index = self.cur_index
 			f1_retval = self.F1()
-			print 'f1 retval forom f: ', f1_retval
+			# print 'f1 retval forom f: ', f1_retval
 			return f1_retval
 		else:
 			return False
 	def G(self):
-		print '^^^^^^^^ G ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ G ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# G-> H G1
 		h_retval = self.H()
 		if h_retval == True:
 			temp_index = self.cur_index
 			g1_retval = self.G1()
-			print 'g1 val from g: ', g1_retval
+			# print 'g1 val from g: ', g1_retval
 			return g1_retval
 		else:
 			return False
 
 	def H(self):
-		print '^^^^^^^^ H ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ H ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# H-> I H1
 		i_retval = self.I()
 		if i_retval == True:
 			temp_index = self.cur_index
 			h1_retval = self.H1()
-			print 'h1 val from h : ', h1_retval
+			# print 'h1 val from h : ', h1_retval
 			return h1_retval
 		else:
 		 return False
 
 	def I(self):
-		print '^^^^^^^^ I ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ I ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		# I-> - I | identifier | number
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '-':
-			print '** FOUND UNARY MINUS'
+			# print '** FOUND UNARY MINUS'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			i_retval = self.I()
@@ -899,11 +890,11 @@ class parser:
 			return False
 
 	def H1(self):
-		print '^^^^^^^^ H1 ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ H1 ^^^^^^^^^^^^^'
 		# H1: / I H1 | e
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '/':
-			print '**** Found /'
+			# print '**** Found /'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			i_retval = self.I()
@@ -916,11 +907,11 @@ class parser:
 
 	
 	def G1(self):
-		print '^^^^^^^^ G1 ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ G1 ^^^^^^^^^^^^^'
 		# G1 -> * H G1 | e
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '*':
-			print '** FOUND *'
+			# print '** FOUND *'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			h_retval = self.H()
@@ -933,10 +924,10 @@ class parser:
 
 	def F1(self):
 		# F1: - G F1 | e
-		print '^^^^^^^^ F1 ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ F1 ^^^^^^^^^^^^^'
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '-':
-			print '** FOUND -'
+			# print '** FOUND -'
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			g_retval = self.G()
@@ -948,11 +939,11 @@ class parser:
 			return True
 
 	def E1(self):
-		print '^^^^^^^^ E1 ^^^^^^^^^^^^^'
+		# print '^^^^^^^^ E1 ^^^^^^^^^^^^^'
 		# E1: + F E1 | e
 		temp_index = self.cur_index
 		if self.symbol_table[temp_index]['token_type'] == 'arithop' and self.symbol_table[temp_index]['value'] == '+':
-			print 'FOUND + '
+			# print 'FOUND + '
 			temp_index += 1
 			self.cur_index += temp_index - self.cur_index
 			f_retval = self.F()

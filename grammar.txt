@@ -1,0 +1,49 @@
+PROGRAM: IMPORTS | EXTERNALDECSTAT | MAIN
+
+IMPORTS: #include< const > | e
+
+EXTERNALDECSTAT: STORAGECLASS DECSTAT ;
+
+STORAGECLASS: auto | static | volatile | register | extern | e
+
+DECSTAT: DATATYPE identifier | DATATYPE MULTIPLEDECSTAT
+
+DATATYPE: int | float | char | double | void
+
+MULTIPLEDECSTAT: identifier , MULTIPLEDECSTAT | identifier
+
+MAIN: int main(){STATEMENTS} 
+
+STATEMENTS:	DECSTAT ; | INITSTAT ; | ASGNSTAT ; | CONDSTAT ; | for(FORE; FORE; FORE) {STATEMENTS}
+			
+FORE: DECSTAT ; | INITSTAT ; | ASGNSTAT ; | CONDSTAT ;
+
+INITSTAT: DATATYPE identifier assignmentOperator E | DATATYPE MULTIPLEINITSTAT
+
+MULTIPLEINITSTAT: identifier assignmentOperator E, MULTIPLEINITSTAT | identifier assignmentOperator E
+
+ASGNSTAT: identifier assignmentOperator E;
+
+CONDSTAT: if ( E relop|logop E )
+
+E: F E1
+
+E1: + F E1 | e
+
+F: G F1
+
+F1: - G F1 | e
+
+G: H G1
+
+G1: * H G1 | e
+
+H: I H1
+
+H1: / I H1 | e
+
+I: - I | identifier | number
+
+relop: < | > | <= | >= | == | !=
+
+logop: && | || | !
