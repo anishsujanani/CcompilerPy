@@ -642,19 +642,19 @@ class parser:
 		print 'Trying: ', self.symbol_table[temp_index]
 		if self.symbol_table[temp_index]['token_type'] == 'spfuncs':
 			temp_index += 1
-			print 'Trying: ', self.symbol_table[temp_index]
+			print 'CURRENT: ', self.symbol_table[temp_index]
 			if self.symbol_table[temp_index]['value'] == '(':
 				temp_index += 1
-				print 'Trying: ', self.symbol_table[temp_index]
+				print 'CURRENT: ', self.symbol_table[temp_index]
 				if self.symbol_table[temp_index]['value'] == '"':
 					temp_index += 1
-					print 'Trying: ', self.symbol_table[temp_index]
+					print 'CURRENT: ', self.symbol_table[temp_index]
 					if self.symbol_table[temp_index]['token_type'] == 'const':
 						temp_index += 1
-						print 'Trying: ', self.symbol_table[temp_index]
+						print 'CURRENT: ', self.symbol_table[temp_index]
 						if self.symbol_table[temp_index]['value'] == '"':
 							temp_index += 1
-							print 'Trying!!!!!!!!!!!: ', self.symbol_table[temp_index]
+							print 'CURRENT: ', self.symbol_table[temp_index]
 							if self.symbol_table[temp_index]['value'] == ')':
 								temp_index += 1
 								self.cur_index += temp_index - self.cur_index
@@ -708,7 +708,14 @@ class parser:
 							self.cur_index += temp_index - self.cur_index
 							return True
 					else:
+						print 'Expected )'
 						return False
+				else:
+					print 'Expected opening "'
+					return False
+			else:
+				print 'Expected opening ('
+				return False
 
 
 	# statements:	declarationStatement ; | initializationStatement ; | assignmentStatement ; | conditionalStatement ; |
