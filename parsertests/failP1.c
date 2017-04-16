@@ -7,17 +7,17 @@ extern char c, y;
 
 int main(){
 	int a;
-	int a;
-	int a,b;
-	int a = 10;
+	int a = 10, b = 20;
 	p = 20;
 	
 
-	for(i = 10; i ; i--) {
-		for(j = 0; j < 10; j++) {
-			int b = 20
+	for(i = 10; i; i != 2) {
+		for ( i = 0; j; i++) {
+			a = 20;
 		}
 	}
+
+
 
 	
 /*		FAIL TEST CASES FOR 'FOR':
@@ -28,18 +28,7 @@ int main(){
 		for(i; {}
 */	
 
-	for(int i = 0; i < 10; i++) {
-		int a = 10;
-		b = a;
-		for(int j = 0; j != 10; --j) {
-			int XYZ;
-		}
-	}
 
-	int a = 0, b = 0;
-	int x = 10;
-	printf("x = %d", x);
-	return 2;
-	// return a
+	 return a;
 
 }

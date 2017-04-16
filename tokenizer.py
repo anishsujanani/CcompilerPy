@@ -48,6 +48,12 @@ class tokenizer:
 		print 'HEREHERE', self.token_stream
 
 		for i in self.token_stream:
+
+			if len(i) == 3 and i[1] == '=':
+				self.symbol_table.append({ 'token_type': 'identifier', 'value': i[0]})
+				self.symbol_table.append({ 'token_type': 'asgnop', 'value': i[1]})
+				self.symbol_table.append({ 'token_type': 'const', 'value': i[2]})
+				continue
 			
 			if i == '"' and string_state == False:
 				string_state = True
@@ -64,6 +70,9 @@ class tokenizer:
 
 			if string_state == True:
 				buf += i
+
+			
+
 
 			elif i in self.keywords:
 				self.symbol_table.append( {'token_type': 'keyword', 'value': i} )
@@ -105,7 +114,7 @@ class tokenizer:
 				except ValueError: # else identifier
 					self.symbol_table.append({'token_type': 'identifier', 'value': i})	
 					
-
+			
 	
 		#self.symbol_table.append(token_stream)
 		return self.symbol_table	
