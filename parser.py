@@ -520,6 +520,11 @@ class parser:
 						while statement_retval == True:
 							statement_retval = self.parseStatements()
 
+						if statement_retval == False and self.symbol_table[self.cur_index]['value'] == '}':
+							print 'Parse failed'
+							exit(0);
+
+
 						temp_index = self.cur_index															# statements
 						print 'CURRENT: ', self.symbol_table[temp_index]
 				 		if self.symbol_table[temp_index]['token_type'] == 'punctuation' and self.symbol_table[temp_index]['value'] == '}':

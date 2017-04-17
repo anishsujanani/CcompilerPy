@@ -13,22 +13,7 @@ int main(){
 
 	for(i = 10; i; i != 2) {
 		for ( i = 0; j; i++) {
-			a = 20;
+			a = 20
 		}
 	}
-
-
-
-	
-/*		FAIL TEST CASES FOR 'FOR':
-		for()
-		for(;)
-		for; ;)
-		for(i;)
-		for(i; {}
-*/	
-
-
-	 return a;
-
 }
