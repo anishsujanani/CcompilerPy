@@ -93,11 +93,8 @@ class lexer:
 	def tokenController(self):
 		self.token_stream = self.getTokenStream()
 		print self.filecontent
-		#print '\n\nTOKEN STREAM GENERATED:', self.token_stream
-		#print 'Now calling tokenizer'
 		self.tokenizer = tokenizer()
 		self.symbol_table = self.tokenizer.tokenize(self.token_stream)
-		#print '\n\nSymTab: ', self.symbol_table
 		return self.symbol_table
 
 
@@ -107,7 +104,7 @@ class lexer:
 
 	# Function generates tokens based on patterns and returns them to tokenController
 	# using a lexeme begin and forward ptr
-	# need to implement lookaheads and count number of characters matched,
+	# implement lookaheads and count number of characters matched,
 	# return token of the one that got the most matched characters, add to token stream
 	def getTokenStream(self):
 		token_stream = []
@@ -117,12 +114,9 @@ class lexer:
 				skip_count -= 1
 				continue
 			
-			#print skip_count
 			self.lexemeForward += 1
 			current_string = self.filecontent[self.lexemeBegin:self.lexemeForward]
 			current_char = current_string[-1:]
-			#print current_string
-			#print current_char
 
 			# delimited by spaces		
 			if self.filecontent[i] == ' ':
@@ -131,12 +125,10 @@ class lexer:
 			# search for keywords
 			if current_string in self.keywords:
 				if self.filecontent[self.lexemeForward] == ' ':
-					#print 'token keyword',current_string
 					token_stream.append(current_string)
 					self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.punctuation:
-				#print 'token ',current_string
 				token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 			
@@ -145,12 +137,10 @@ class lexer:
 			elif current_string in self.arithop:
 
 				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
-					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append(current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1])
 					skip_count = 1
 					self.lexemeForward += 1
 				else:
-					#print 'token ',current_string
 					token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 			
@@ -163,34 +153,26 @@ class lexer:
 				while self.filecontent[lookahead] == ' ':
 					lookahead += 1
 					lookahead_chars += 1	
-				#lookahead_chars = len(self.filecontent[self.lexemeBegin:lookahead + 1])
 				temp = self.filecontent[self.lexemeBegin:lookahead + 1]
 				lookahead_chars += temp.count(' ')
-				#print 'Lookahead chars = ', lookahead_chars
 				lookahead_string = temp.replace(' ', '')
-				#print 'lookinghead to  %s' % lookahead_string 
 
 				if lookahead_string in self.relop:
-						#print 'Found lookahead token  %s' % lookahead_string
 						token_stream.append(lookahead_string)
-						#print 'skip %s' % self.filecontent[self.lexemeBegin:lookahead + 1]
 						self.lexemeForward += lookahead_chars
 						skip_count = lookahead_chars
 
 				else:
-						#print 'token ',current_string
 						token_stream.append(current_string)
 
 				self.lexemeBegin = self.lexemeForward
 
 			elif current_string in self.asgnop:
 				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
-					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append(current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1])
 					skip_count = 1
 					self.lexemeForward += 1
 				else:
-					#print 'token ',current_string
 					token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 			
@@ -198,42 +180,32 @@ class lexer:
 
 			elif current_string in self.bitLopOps:
 				if self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == current_char:
-					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append(current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1])
 					skip_count = 1
 					self.lexemeForward += 1
 				elif current_char == '!' and self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1].replace(' ', '') == '=' :
-					#print 'HERESDJGSDKGJSDLKJGLSDKNGLSDN'
-					#print 'lookahead token: ', current_char + self.filecontent[self.lexemeBegin+1 : self.lexemeForward+1]
 					token_stream.append('!=')
 					skip_count = 1
 					self.lexemeForward += 1
 				else:
-					#print 'token ',current_string
 					token_stream.append(current_string)
 				self.lexemeBegin = self.lexemeForward
 
 			else:
 				if (current_char.isalnum()) and self.filecontent[i + 1] == ' ':
-					#print 'token: ', current_string
  					token_stream.append(current_string)
- 					#print 'token: ', current_char
  					self.lexemeBegin = self.lexemeForward
 				elif self.inPunctuation(current_char) or self.inArithop(current_char) or self.inRelop(current_char):
- 					#print 'rem token: ', current_string[:-1]
  					token_stream.append(current_string[:-1])
  					
  					if self.inArithop(current_char):
- 						#print 'LOOKAHEAD TO ', self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
  						temp_lookahead_string = self.filecontent[self.lexemeBegin+1:self.lexemeForward+1]
  						if  temp_lookahead_string in self.incop or temp_lookahead_string in self.decop:
- 							#print 'lookahead token: ', temp_lookahead_string
  							token_stream.append(temp_lookahead_string)
  							self.lexemeForward += 1
  							skip_count = 1
 
  					else:	
- 						#print 'rem token: ', current_char
  						token_stream.append(current_char)
  					self.lexemeBegin = self.lexemeForward
  				
